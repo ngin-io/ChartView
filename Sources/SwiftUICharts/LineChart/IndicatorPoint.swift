@@ -9,20 +9,28 @@
 import SwiftUI
 
 struct IndicatorPoint: View {
+    var color: Color
+    
     var body: some View {
-        ZStack{
+        ZStack(alignment: .center, content: {
             Circle()
-                .fill(Colors.IndicatorKnob)
+                .size(CGSize(width: 14, height: 14))
+                .fill(.white)
             Circle()
-                .stroke(Color.white, style: StrokeStyle(lineWidth: 4))
-        }
-        .frame(width: 14, height: 14)
-        .shadow(color: Colors.LegendColor, radius: 6, x: 0, y: 6)
+                .size(CGSize(width: 8, height: 8))
+                .fill(color)
+                .offset(x: 3, y: 3)
+            Circle()
+                .size(CGSize(width: 14, height: 14))
+                .stroke(color, style: StrokeStyle(lineWidth: 1))
+            
+        })
+        .frame(width: 16, height: 16)
     }
 }
 
 struct IndicatorPoint_Previews: PreviewProvider {
     static var previews: some View {
-        IndicatorPoint()
+        IndicatorPoint(color: .black)
     }
 }

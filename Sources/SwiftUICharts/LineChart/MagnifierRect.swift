@@ -46,7 +46,8 @@ struct LineIndicator: View {
         GeometryReader { reader in
             VStack {
                 Text("\(self.currentNumber, specifier: valueSpecifier)")
-                    .font(.system(size: 18, weight: .bold))
+//                    .font(.system(size: 18, weight: .bold))
+                    .font(.callout)
                     .foregroundColor(self.colorScheme == .dark ? Color.white : Color.black)
                     .background(ViewGeometry())
                     .onPreferenceChange(ViewSizeKey.self) {
@@ -55,10 +56,10 @@ struct LineIndicator: View {
                     .offset(x: textOffset(touchLocationX: touchOffset,
                                           textWidth: textSize.width,
                                           frameWidth: graphWidth),
-                            y: 0)
+                            y: -textSize.height)
                 Path() { path in
-                    path.move(to: CGPoint(x: reader.frame(in: .local).width/2, y: 0))
-                    path.addLine(to: CGPoint(x: reader.frame(in: .local).width/2, y: reader.frame(in: .local).height))
+                    path.move(to: CGPoint(x: reader.frame(in: .local).width/2, y: -textSize.height))
+                    path.addLine(to: CGPoint(x: reader.frame(in: .local).width/2, y: reader.frame(in: .local).height-textSize.height+15))
                 }
                 .stroke(color, style: StrokeStyle(lineWidth: 2, dash: [3]))
             }

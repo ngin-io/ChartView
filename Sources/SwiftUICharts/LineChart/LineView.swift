@@ -53,7 +53,8 @@ public struct LineView: View {
                     if (self.title != nil){
                         Text(self.title!)
                             .font(.title)
-                            .bold().foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.textColor : self.style.textColor)
+                            .bold()
+                            .foregroundColor(self.colorScheme == .dark ? self.darkModeStyle.textColor : self.style.textColor)
                     }
                     if (self.legend != nil){
                         Text(self.legend!)
