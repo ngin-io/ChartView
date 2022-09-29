@@ -44,6 +44,7 @@ public struct LineView: View {
     
     public var body: some View {
         GeometryReader{ geometry in
+            let graphHeight = geometry.frame(in: .global).size.height
             VStack(alignment: .leading, spacing: 8) {
                 Group{
                     if (self.title != nil){
@@ -68,35 +69,33 @@ public struct LineView: View {
                                 .animation(Animation.easeOut(duration: 1).delay(1))
                         }
                         Line(data: self.data,
-                             frame: .constant(CGRect(x: 0, y: 0, width: reader.frame(in: .local).width - 30, height: reader.frame(in: .local).height + 25)),
+                             frame: .constant(CGRect(x: 0, y: 0, width: reader.frame(in: .local).width, height: reader.frame(in: .local).height + 25)),
                              touchLocation: self.$indicatorLocation,
                              showIndicator: self.$hideHorizontalLines,
                              minDataValue: .constant(nil),
                              maxDataValue: .constant(nil),
                              showBackground: false,
-                             gradient: self.style.gradientColor
+                             gradient: self.style.gradientColor,
+                             lineColor: self.style.accentColor,
+                             curvedLines: false
                         )
-                        .offset(x: 30, y: 0)
-                        .onAppear(){
-                            self.showLegend = true
-                        }
-                        .onDisappear(){
-                            self.showLegend = false
-                        }
                     }
-                    .frame(width: geometry.frame(in: .local).size.width, height: 240)
-                    .offset(x: 0, y: 40 )
-                    MagnifierRect(currentNumber: self.$currentDataNumber, valueSpecifier: self.valueSpecifier)
-                        .opacity(self.opacity)
-                        .offset(x: self.dragLocation.x - geometry.frame(in: .local).size.width/2, y: 36)
+                    .frame(width: geometry.frame(in: .local).size.width, height: graphHeight)
+                    LineIndicator(touchOffset: Binding<CGFloat>.constant(self.dragLocation.x - geometry.frame(in: .local).size.width/2),
+                                  currentNumber: self.$currentDataNumber,
+                                  valueSpecifier: self.valueSpecifier,
+                                  graphWidth: geometry.frame(in: .local).size.width,
+                                  color: self.style.accentColor)
+                    .opacity(self.opacity)
                 }
-                .frame(width: geometry.frame(in: .local).size.width, height: 240)
+                .offset(x: 0, y: 40)
+                .frame(width: geometry.frame(in: .local).size.width, height: graphHeight)
                 .gesture(DragGesture()
                 .onChanged({ value in
                     self.dragLocation = value.location
-                    self.indicatorLocation = CGPoint(x: max(value.location.x-30,0), y: 32)
+                    self.indicatorLocation = CGPoint(x: max(value.location.x,0), y: 32)
                     self.opacity = 1
-                    self.closestPoint = self.getClosestDataPoint(toPoint: value.location, width: geometry.frame(in: .local).size.width-30, height: 240)
+                    self.closestPoint = self.getClosestDataPoint(toPoint: value.location, width: geometry.frame(in: .local).size.width, height: graphHeight)
                     self.hideHorizontalLines = true
                 })
                     .onEnded({ value in
@@ -123,13 +122,20 @@ public struct LineView: View {
 }
 
 struct LineView_Previews: PreviewProvider {
+    
     static var previews: some View {
+        let style = ChartStyle(
+            backgroundColor: Color.white,
+            accentColor: Color(hexString: "0F6158"),
+            gradientColor: GradientColor(start: Color(hexString: "0F6158").opacity(0.6), end: Color(hexString: "0F6158").opacity(0.0)),
+            textColor: Color.black,
+            legendTextColor: Color.gray,
+            dropShadowColor: Color.gray)
         Group {
-            LineView(data: [8,23,54,32,12,37,7,23,43], title: "Full chart", style: Styles.lineChartStyleOne)
+            LineView(data: [8,23,54,32,12,37,7,23,43], title: "Full chart", style: style)
             
-            LineView(data: [282.502, 284.495, 283.51, 285.019, 285.197, 286.118, 288.737, 288.455, 289.391, 287.691, 285.878, 286.46, 286.252, 284.652, 284.129, 284.188], title: "Full chart", style: Styles.lineChartStyleOne)
+            LineView(data: [282.502, 284.495, 283.51, 285.019, 285.197, 286.118, 288.737, 288.455, 289.391, 287.691, 285.878, 286.46, 286.252, 284.652, 284.129, 284.188], title: "Full chart", style: style)
             
         }
     }
 }
-

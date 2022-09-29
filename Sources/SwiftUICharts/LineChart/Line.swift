@@ -18,6 +18,7 @@ public struct Line: View {
     @State private var showFull: Bool = false
     @State var showBackground: Bool = true
     var gradient: GradientColor = GradientColor(start: Colors.GradientPurple, end: Colors.GradientNeonBlue)
+    var lineColor: Color = Color.black
     var index:Int = 0
     let padding:CGFloat = 30
     var curvedLines: Bool = true
@@ -60,17 +61,17 @@ public struct Line: View {
     
     public var body: some View {
         ZStack {
-            if(self.showFull && self.showBackground){
+//            if(self.showFull && self.showBackground){
                 self.closedPath
-                    .fill(LinearGradient(gradient: Gradient(colors: [Colors.GradientUpperBlue, .white]), startPoint: .bottom, endPoint: .top))
+                    .fill(LinearGradient(gradient: gradient.getGradient(), startPoint: .bottom, endPoint: .top))
                     .rotationEffect(.degrees(180), anchor: .center)
                     .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                     .transition(.opacity)
                     .animation(.easeIn(duration: 1.6))
-            }
+//            }
             self.path
                 .trim(from: 0, to: self.showFull ? 1:0)
-                .stroke(LinearGradient(gradient: gradient.getGradient(), startPoint: .leading, endPoint: .trailing) ,style: StrokeStyle(lineWidth: 3, lineJoin: .round))
+                .stroke(lineColor, style: StrokeStyle(lineWidth: 3, lineJoin: .round))
                 .rotationEffect(.degrees(180), anchor: .center)
                 .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                 .animation(Animation.easeOut(duration: 1.2).delay(Double(self.index)*0.4))
